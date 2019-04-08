@@ -79,7 +79,7 @@ def convert_all_data(output_path):
 
     i,j = np.shape(svc_path)
 
-    output_data_p = os.path.join(output_path,'data')
+    output_data_p = os.path.join(output_path,'data.hdf5')
     hf = h5py.File(output_data_p, 'w')
 
     data_set = hf.create_dataset("data", (i*j,64**3))
@@ -92,6 +92,7 @@ def convert_all_data(output_path):
             arr = convert_image_to_numpy(vox)
             data_set[path_id+label_id] = arr.reshape(64**3)
             data_label[path_id+label_id] = label_id
+            hf.flush()
 
     hf.close()
     
