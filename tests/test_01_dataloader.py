@@ -7,6 +7,7 @@ class TestConfig(unittest.TestCase):
 
     def setUp(self):
         self.path_file = os.path.join('.','dataset','stl','0_Oring','0_1.STL')
+        self.output_path = os.path.join('.','tests','test_output')
 
     def test_path(self):
         path = utils.dataloader.sampler(3)
@@ -15,7 +16,7 @@ class TestConfig(unittest.TestCase):
     def test_load_data(self):
         vol = utils.dataloader.load_file(self.path_file)
 
-        output_path = os.path.join('.','tests','test_output','0_1.vti')
+        output_path = os.path.join(self.output_path,'0_1.vti')
         
         writer = vtk.vtkXMLImageDataWriter()
         writer.SetFileName(output_path)
@@ -33,3 +34,6 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(arr.shape[0],dim[0])
         self.assertEqual(arr.shape[1],dim[1])
         self.assertEqual(arr.shape[2],dim[2])
+    
+    def test_convert_data(self):
+        utils.dataloader.convert_all_data(self.output_path)
