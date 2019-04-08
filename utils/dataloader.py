@@ -3,6 +3,7 @@ import vtk
 from vtk.util.numpy_support import vtk_to_numpy
 import numpy as np
 import h5py
+from numba import jit, prange
 
 def sampler(sample_size):
     """function sample n stl file from each folder
@@ -50,7 +51,7 @@ def load_file(path):
     vox_modeller = vtk.vtkVoxelModeller()
     vox_modeller.SetSampleDimensions(64,64,64)
     vox_modeller.SetModelBounds(bounds)
-    vox_modeller.SetScalarTypeToFloat()
+    vox_modeller.SetScalarTypeToInt()
     vox_modeller.SetMaximumDistance(.1)
 
     vox_modeller.SetInputConnection(stl_reader.GetOutputPort())
@@ -74,6 +75,7 @@ def convert_image_to_numpy(vtk_image):
     arr = vtk_to_numpy(sc)
     return arr.reshape(dim)
 
+@jit(parallel = True)
 def convert_all_data(output_path):
     svc_path = sampler(-1)
 
@@ -85,12 +87,12 @@ def convert_all_data(output_path):
     data_set = hf.create_dataset("data", (i*j,64**3))
     data_label = hf.create_dataset("data_label", (i*j,),dtype='i8')
 
-    for label_id in range(i):
-        for path_id in range(j):
+    for label_id in prange(i):
+        for path_id in prange(j):
             path = svc_path[label_id][path_id]
             vox = load_file(path)
             arr = convert_image_to_numpy(vox)
-            data_set[path_id+label_id] = arr.reshape(64**3)
+            data_set[path_id+label_id] = np.copy(arr.reshape(64**3))
             data_label[path_id+label_id] = label_id
             hf.flush()
 

@@ -2,6 +2,8 @@ import unittest
 import utils.dataloader
 import os
 import vtk
+import numpy as np
+import h5py
 
 class TestConfig(unittest.TestCase):
 
@@ -37,3 +39,16 @@ class TestConfig(unittest.TestCase):
     
     def test_convert_data(self):
         utils.dataloader.convert_all_data(self.output_path)
+    
+    def test_read_hdf5(self):
+        path = os.path.join(self.output_path,'data.hdf5')
+        dat = h5py.File(path, 'r')
+
+        x = dat.get('data')
+
+        x_0 = np.array(x[0])
+        x_20 = np.array(x[20])
+        
+        self.assertTrue(not np.array_equal(x_0,x_20))
+
+        dat.close()
