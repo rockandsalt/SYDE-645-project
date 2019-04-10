@@ -56,7 +56,6 @@ def load_file(path):
 
     vox_modeller.SetInputConnection(stl_reader.GetOutputPort())
     vox_modeller.Update()
-    vox_modeller.GetOutput()
 
     return vox_modeller.GetOutput()
 
@@ -75,7 +74,6 @@ def convert_image_to_numpy(vtk_image):
     arr = vtk_to_numpy(sc)
     return arr.reshape(dim)
 
-@jit(parallel = True)
 def convert_all_data(output_path):
     svc_path = sampler(-1)
 
@@ -87,14 +85,13 @@ def convert_all_data(output_path):
     data_set = hf.create_dataset("data", (i*j,64**3))
     data_label = hf.create_dataset("data_label", (i*j,),dtype='i8')
 
-    for label_id in prange(i):
-        for path_id in prange(j):
+    for label_id in range(i):
+        for path_id in range(j):
             path = svc_path[label_id][path_id]
             vox = load_file(path)
             arr = convert_image_to_numpy(vox)
-            data_set[path_id+label_id] = np.copy(arr.reshape(64**3))
-            data_label[path_id+label_id] = label_id
-            hf.flush()
+            data_set[label_id*j+path_id] = arr.reshape(64**3)
+            data_label[label_id*j+path_id] = label_id
 
     hf.close()
     
