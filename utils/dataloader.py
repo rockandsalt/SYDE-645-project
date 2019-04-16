@@ -94,5 +94,25 @@ def convert_all_data(output_path):
             data_label[label_id*j+path_id] = label_id
 
     hf.close()
+
+### helper function for multithreading
+def opti_func(train_i,test_i,crt_clf,X,Y):
+    filt,clf = crt_clf()
     
+    X_train, X_test = X[train_i], X[test_i]
+    y_train, y_test = Y[train_i], Y[test_i]
     
+    X_train = filt.fit_transform(X_train, y_train)
+    X_test = filt.transform(X_test)
+    clf.fit(X_train, y_train)
+    
+    return clf.score(X_test,y_test)*100
+
+def load_data(path_str):
+    dat = h5py.File(path_str, 'r')
+
+    X = np.array(dat.get('data'))
+    Y = np.array(dat.get('data_label'))
+    dat.close()
+
+    return (X,Y)
