@@ -60,5 +60,4 @@ class TestConfig(unittest.TestCase):
         dat.close()
     
     def test_split_data(self):
-        file_name = os.path.join(self.output_path,'data.hdf5')
-        utils.dataloader.split_data(file_name,self.output_path,'split')
+        utils.dataloader.split_data(self.output_path,'split')

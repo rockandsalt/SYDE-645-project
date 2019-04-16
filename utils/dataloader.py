@@ -4,7 +4,7 @@ from vtk.util.numpy_support import vtk_to_numpy
 import numpy as np
 import h5py
 from numba import jit, prange
-from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.model_selection import StratifiedKFold
 
 def sampler(sample_size):
     """function sample n stl file from each folder
@@ -128,19 +128,16 @@ def save_numpy(path_str,outpath):
     np.save(os.path.join(outpath,'Y.npy'),Y)
 
 
-def split_data(input_path,output_path,name):
+def split_data(output_path,name):
 
-    dat = h5py.File(input_path, 'r')
+    X = np.load(os.path.join(output_path,'X.npy'),mmap_mode='r')
+    Y = np.load(os.path.join(output_path,'Y.npy'),mmap_mode='r')
 
-    X = np.array(dat.get('data'))
-    Y = np.array(dat.get('data_label'))
-    dat.close()
-
-    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.5)
-
-    for s_data in sss.split(X,Y):
-        for i in range(2):
-            np.save(os.path.join(output_path,"x_{}_{}".format(name,i)), X[s_data[i]])
-            np.save(os.path.join(output_path,"y_{}_{}".format(name,i)), Y[s_data[i]])
+    skf = StratifiedKFold(n_splits=8)
+    i = 0
+    for train_index, test_index in skf.split(X, Y):
+        np.save(os.path.join(output_path,"x_{}_{}".format(name,i)), X[test_index])
+        np.save(os.path.join(output_path,"y_{}_{}".format(name,i)), Y[test_index])
+        i+=1
     
     
