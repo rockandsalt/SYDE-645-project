@@ -40,6 +40,9 @@ class TestConfig(unittest.TestCase):
     def test_convert_data(self):
         utils.dataloader.convert_all_data(self.output_path)
     
+    def test_convert_to_np(self):
+        utils.dataloader.save_numpy(os.path.join(self.output_path,'data.hdf5'),self.output_path)
+    
     def test_read_hdf5(self):
         path = os.path.join(self.output_path,'data.hdf5')
         dat = h5py.File(path, 'r')

@@ -118,6 +118,16 @@ def load_data(path_str):
 
     return (X,Y)
 
+def save_numpy(path_str,outpath):
+    dat = h5py.File(path_str, 'r')
+    X = np.array(dat.get('data'))
+    Y = np.array(dat.get('data_label'))
+    dat.close()
+
+    np.save(os.path.join(outpath,'X.npy'),X)
+    np.save(os.path.join(outpath,'Y.npy'),Y)
+
+
 def split_data(input_path,output_path,name):
 
     dat = h5py.File(input_path, 'r')
