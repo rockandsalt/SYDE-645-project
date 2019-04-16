@@ -124,18 +124,13 @@ def split_data(input_path,output_path,name):
 
     X = np.array(dat.get('data'))
     Y = np.array(dat.get('data_label'))
-
-    length = X.shape[0]
+    dat.close()
 
     sss = StratifiedShuffleSplit(n_splits=1, test_size=0.5)
 
     for s_data in sss.split(X,Y):
         for i in range(2):
-            dat_i = h5py.File(os.path.join(output_path,'{}_{}.hdf5'.format(name,i)), 'w')
-            data_i_set = dat_i.create_dataset("data", (length/2,64**3))
-            data_i_label = dat_i.create_dataset("data_label", (length/2,),dtype='i8')
-            data_i_set = X[s_data[i]]
-            data_i_label = Y[s_data[i]]
-            dat_i.close()
+            np.save(os.path.join(output_path,"x_{}_{}".format(name,i)), X[s_data[i]])
+            np.save(os.path.join(output_path,"y_{}_{}".format(name,i)), Y[s_data[i]])
     
-    dat.close()
+    
