@@ -4,6 +4,7 @@ from vtk.util.numpy_support import vtk_to_numpy
 import numpy as np
 import h5py
 from numba import jit, prange
+from sklearn.model_selection import StratifiedShuffleSplit
 
 def sampler(sample_size):
     """function sample n stl file from each folder
@@ -116,3 +117,25 @@ def load_data(path_str):
     dat.close()
 
     return (X,Y)
+
+def split_data(input_path,output_path,name):
+
+    dat = h5py.File(input_path, 'r')
+
+    X = np.array(dat.get('data'))
+    Y = np.array(dat.get('data_label'))
+
+    length = X.shape[0]
+
+    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.5)
+
+    for s_data in sss.split(X,Y):
+        for i in range(2):
+            dat_i = h5py.File(os.path.join(output_path,'{}_{}.hdf5'.format(name,i)), 'w')
+            data_i_set = dat_i.create_dataset("data", (length/2,64**3))
+            data_i_label = dat_i.create_dataset("data_label", (length/2,),dtype='i8')
+            data_i_set = X[s_data[i]]
+            data_i_label = Y[s_data[i]]
+            dat_i.close()
+    
+    dat.close()

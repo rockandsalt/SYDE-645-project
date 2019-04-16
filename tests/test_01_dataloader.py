@@ -55,3 +55,7 @@ class TestConfig(unittest.TestCase):
         #self.assertEqual(y_0,y_20)
 
         dat.close()
+    
+    def test_split_data(self):
+        file_name = os.path.join(self.output_path,'data.hdf5')
+        utils.dataloader.split_data(file_name,self.output_path,'split')
