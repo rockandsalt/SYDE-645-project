@@ -133,7 +133,7 @@ def split_data(output_path,name):
     X = np.load(os.path.join(output_path,'X.npy'),mmap_mode='r')
     Y = np.load(os.path.join(output_path,'Y.npy'),mmap_mode='r')
 
-    skf = StratifiedKFold(n_splits=8)
+    skf = StratifiedKFold(n_splits=4, shuffle=True)
     i = 0
     for train_index, test_index in skf.split(X, Y):
         np.save(os.path.join(output_path,"x_{}_{}".format(name,i)), X[test_index])
