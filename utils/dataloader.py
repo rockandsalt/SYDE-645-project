@@ -72,7 +72,7 @@ def convert_image_to_numpy(vtk_image):
 
     dim = vtk_image.GetDimensions()
     wrap = dsa.WrapDataObject(vtk_image)
-    return adapter.PointData['ImageScalars'].reshape(dim,order='F')
+    return wrap.PointData['ImageScalars'].reshape(dim,order='F')
 
 def convert_all_data(output_path):
     svc_path = sampler(-1)
@@ -123,16 +123,16 @@ def save_numpy(path_str,outpath):
     Y = np.array(dat.get('data_label'))
     dat.close()
 
-    np.save(os.path.join(outpath,'X.npy'),X)
-    np.save(os.path.join(outpath,'Y.npy'),Y)
+    np.save(os.path.join(outpath,'X_alt.npy'),X)
+    np.save(os.path.join(outpath,'Y_alt.npy'),Y)
 
 
 def split_data(output_path,name):
 
-    X = np.load(os.path.join(output_path,'X.npy'),mmap_mode='r')
-    Y = np.load(os.path.join(output_path,'Y.npy'),mmap_mode='r')
+    X = np.load(os.path.join(output_path,'X_alt.npy'),mmap_mode='r')
+    Y = np.load(os.path.join(output_path,'Y_alt.npy'),mmap_mode='r')
 
-    skf = StratifiedKFold(n_splits=4, shuffle=True)
+    skf = StratifiedKFold(n_splits=8, shuffle=False)
     i = 0
     for train_index, test_index in skf.split(X, Y):
         np.save(os.path.join(output_path,"x_{}_{}".format(name,i)), X[test_index])

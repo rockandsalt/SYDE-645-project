@@ -30,12 +30,7 @@ class TestConfig(unittest.TestCase):
     def test_convert_numpy(self):
         vol = utils.dataloader.load_file(self.path_file)
 
-        adapter = dsa.WrapDataObject(vol)
-
-        print(adapter.PointData['ImageScalars'].shape)
-
         dim = vol.GetDimensions()
-        print(dim)
         
         arr = utils.dataloader.convert_image_to_numpy(vol)
         
@@ -66,4 +61,4 @@ class TestConfig(unittest.TestCase):
         dat.close()
     
     def test_split_data(self):
-        utils.dataloader.split_data(self.output_path,'split')
+        utils.dataloader.split_data(self.output_path,'split8')
