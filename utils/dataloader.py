@@ -140,4 +140,3 @@ def split_data(output_path,name):
         np.save(os.path.join(output_path,"y_{}_{}".format(name,i)), Y[test_index])
         i+=1
     
-    
