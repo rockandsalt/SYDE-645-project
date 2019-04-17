@@ -1,6 +1,6 @@
 import os
 import vtk
-from vtk.util.numpy_support import vtk_to_numpy
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
 import h5py
 from numba import jit, prange
@@ -71,9 +71,8 @@ def convert_image_to_numpy(vtk_image):
     """
 
     dim = vtk_image.GetDimensions()
-    sc = vtk_image.GetPointData().GetScalars()
-    arr = vtk_to_numpy(sc)
-    return arr.reshape(dim)
+    wrap = dsa.WrapDataObject(vtk_image)
+    return adapter.PointData['ImageScalars'].reshape(dim,order='F')
 
 def convert_all_data(output_path):
     svc_path = sampler(-1)

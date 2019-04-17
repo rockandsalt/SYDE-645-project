@@ -1,5 +1,6 @@
 import unittest
 import utils.dataloader
+from vtk.numpy_interface import dataset_adapter as dsa
 import os
 import vtk
 import numpy as np
@@ -29,7 +30,12 @@ class TestConfig(unittest.TestCase):
     def test_convert_numpy(self):
         vol = utils.dataloader.load_file(self.path_file)
 
+        adapter = dsa.WrapDataObject(vol)
+
+        print(adapter.PointData['ImageScalars'].shape)
+
         dim = vol.GetDimensions()
+        print(dim)
         
         arr = utils.dataloader.convert_image_to_numpy(vol)
         
