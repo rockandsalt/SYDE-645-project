@@ -61,4 +61,4 @@ class TestConfig(unittest.TestCase):
         dat.close()
     
     def test_split_data(self):
-        utils.dataloader.split_data(self.output_path,'split8')
+        utils.dataloader.split_data(self.output_path,'split')
